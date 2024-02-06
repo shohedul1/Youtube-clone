@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/shared/Navigation/Navigation";
+import CurrentUserProvider from "@/context/CurrentUserContext";
+import getCurrentUser from "@/actions/getCurrentUser";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -13,18 +15,21 @@ export const metadata: Metadata = {
   description: "Broadcast Yourself",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const currentUser = await getCurrentUser()
   return (
     <html lang="en">
       <body className={roboto.className}>
-        <Navigation />
-        <div className="pt-16">
-          {children}
-        </div>
+        <CurrentUserProvider user={currentUser}>
+          <Navigation />
+          <div className="pt-16">
+            {children}
+          </div>
+        </CurrentUserProvider>
       </body>
     </html>
   );
